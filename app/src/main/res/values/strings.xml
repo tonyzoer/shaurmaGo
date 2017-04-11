@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ShaurmaGo</string>
+    <string name="title_activity_shaurma_maps">Map</string>
+    <string name="server_url">https://shaurma-go-server-okamanahi.c9users.io</string>
+</resources>
