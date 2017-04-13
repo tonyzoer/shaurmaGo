@@ -1,5 +1,6 @@
 package com.example.zoer.shaurmago;
 
+import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -10,6 +11,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.Console;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -28,6 +34,7 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
     }
 
 
@@ -45,8 +52,30 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
+//        JSONArray arr=ServerConnection.getInstance().getAllPoints();
+//        for (int i = 0; i <arr.length() ; i++) {
+//            try {
+//                JSONObject obj=arr.getJSONObject(i);
+//               LatLng pos=new LatLng(obj.getDouble("Lat"),
+//                obj.getDouble("Lng"));
+//                mMap.addMarker(new MarkerOptions().position(pos).title(obj.getString("name")));
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//                System.out.println();
+//        }
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        JSONObject obj=null;
+        try {
+            obj = new JSONObject(ServerConnection.getInstance().getAllPoints(getString(R.string.get_all_points)));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        obj.length();
+
     }
+
+
 }
