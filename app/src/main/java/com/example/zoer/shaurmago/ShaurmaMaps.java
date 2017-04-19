@@ -1,15 +1,20 @@
 package com.example.zoer.shaurmago;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Pair;
+import android.view.View;
 
+import com.example.zoer.shaurmago.services.ServerConncection;
+import com.example.zoer.shaurmago.services.StringHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
@@ -61,11 +66,17 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+            startActivity(new Intent(ShaurmaMaps.this,PointInfo.class).putExtra("id",marker.getSnippet()));
+                return false;
+            }
+        });
     }
 
 
-    class PointGetter extends AsyncTask<Void, Pair<LatLng,String>, JSONArray> {
+    class PointGetter extends AsyncTask<Void, Pair<LatLng,Pair<String,String>>, JSONArray> {
         private String urlGet = "https://shaurma-go-server-okamanahi.c9users.io/getallpoints.php";
         GoogleMap mMap = null;
 
@@ -77,14 +88,14 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
         protected JSONArray doInBackground(Void... params) {
 
             try {
-                JSONArray arr = new JSONArray(getJsonResponse(urlGet));
+                JSONArray arr = new JSONArray(ServerConncection.getJsonResponse(urlGet));
 
                 for (int i = 0; i < arr.length(); i++) {
                     try {
                         JSONObject obj = arr.getJSONObject(i);
                         LatLng pos = new LatLng(obj.getDouble("Lat"),
                                 obj.getDouble("Lng"));
-                        publishProgress(new Pair<LatLng, String>(pos,obj.getString("name")));
+                        publishProgress(new Pair<LatLng, Pair<String,String>>(pos,new Pair<String, String>(obj.getString("name"),obj.getString("id"))));
                     } catch (JSONException e) {
 
                         e.printStackTrace();
@@ -108,11 +119,11 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
         }
 
         @Override
-        protected void onProgressUpdate(Pair<LatLng,String>... values) {
-            for (Pair<LatLng,String> pair:values
+        protected void onProgressUpdate(Pair<LatLng,Pair<String,String>>... values) {
+            for (Pair<LatLng,Pair<String,String>> pair:values
                  ) {
-                mMap.addMarker(new MarkerOptions().position(pair.first).title(pair.second));
-            }
+                mMap.addMarker(new MarkerOptions().position(pair.first).title(StringHelper.fromUtfToRus(pair.second.first)).snippet(pair.second.second));
+             }
             super.onProgressUpdate(values);
         }
 
@@ -126,46 +137,6 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
             super.onCancelled();
         }
 
-        private String getJsonResponse(String urls) {
-            URL url = null;
-            try {
-                url = new URL(urls);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            HttpURLConnection conn = null;
-            String response = null;
-            try {
-                conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                InputStream in = new BufferedInputStream(conn.getInputStream());
-                response = convertStreamToString(in);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return response;
-        }
 
-        private String convertStreamToString(InputStream is) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            StringBuilder sb = new StringBuilder();
-
-            String line;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line).append('\n');
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            return sb.toString();
-        }
     }
 }

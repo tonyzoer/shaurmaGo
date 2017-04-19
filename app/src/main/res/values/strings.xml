@@ -3,4 +3,5 @@
     <string name="title_activity_shaurma_maps">Map</string>
     <string name="get_all_points">https://shaurma-go-server-okamanahi.c9users.io/getallpoints.php</string>
     <string name="add_new_point">https://shaurma-go-server-okamanahi.c9users.io/addnewpoint.php</string>
+    <string name="get_point_info">https://shaurma-go-server-okamanahi.c9users.io/getpointinfo.php</string>
 </resources>
