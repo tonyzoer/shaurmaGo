@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.zoer.shaurmago.services.ServerConncection;
-import com.google.android.gms.maps.model.Marker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,7 +84,7 @@ public class PointInfo extends Activity {
         protected JSONArray doInBackground(String... params) {
             JSONArray arr = null;
             try {
-                arr = new JSONArray(ServerConncection.getJsonResponse(getString(R.string.get_point_info), new Pair<String, String>("id", params[0])));
+                arr = new JSONArray(ServerConncection.getResponse(getString(R.string.get_point_info), new Pair<String, String>("id", params[0])));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

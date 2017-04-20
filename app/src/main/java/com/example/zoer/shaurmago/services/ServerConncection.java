@@ -17,7 +17,7 @@ import java.net.URL;
  */
 
 public class ServerConncection {
-    public static String getJsonResponse(String urls, Pair<String,String>...pairs) {
+    public static String getResponse(String urls, Pair<String,String>...pairs) {
     return makeRequest(urls,"GET",pairs);
     }
 

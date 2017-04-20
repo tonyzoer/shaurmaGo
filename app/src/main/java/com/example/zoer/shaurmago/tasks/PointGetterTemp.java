@@ -36,7 +36,7 @@
 //    protected JSONArray doInBackground(Void... params) {
 //
 //        try {
-//            JSONArray arr= new JSONArray(getJsonResponse(urlGet));
+//            JSONArray arr= new JSONArray(getResponse(urlGet));
 //
 //            for (int i = 0; i <arr.length() ; i++) {
 //                try {
@@ -83,7 +83,7 @@
 //        super.onCancelled();
 //    }
 //
-//    private String getJsonResponse(String urls) {
+//    private String getResponse(String urls) {
 //        URL url = null;
 //        try {
 //            url = new URL(urls);
