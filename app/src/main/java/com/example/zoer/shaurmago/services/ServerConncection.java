@@ -2,6 +2,9 @@ package com.example.zoer.shaurmago.services;
 
 import android.util.Pair;
 
+import com.example.zoer.shaurmago.exceptions.NoInternetConnectionException;
+import com.example.zoer.shaurmago.exceptions.ServerTerminatedException;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -17,11 +20,11 @@ import java.net.URL;
  */
 
 public class ServerConncection {
-    public static String getResponse(String urls, Pair<String,String>...pairs) {
+    public static String getResponse(String urls, Pair<String,String>...pairs) throws NoInternetConnectionException, ServerTerminatedException {
     return makeRequest(urls,"GET",pairs);
     }
 
-    public static String postData(String urls, Pair<String,String>...pairs){
+    public static String postData(String urls, Pair<String,String>...pairs) throws NoInternetConnectionException, ServerTerminatedException {
     return makeRequest(urls,"POST",pairs);
     }
     private static String convertStreamToString(InputStream is) {
@@ -45,7 +48,10 @@ public class ServerConncection {
 
         return sb.toString();
     }
-    private static String makeRequest(String urls,String type, Pair<String,String>...pairs){
+    private static String makeRequest(String urls,String type, Pair<String,String>...pairs) throws NoInternetConnectionException, ServerTerminatedException {
+        if (!isOnline()){
+            throw new NoInternetConnectionException();
+        }
         URL url = null;
         StringBuilder urlbuilder=new StringBuilder(urls);
         try {
@@ -73,8 +79,20 @@ public class ServerConncection {
             InputStream in = new BufferedInputStream(conn.getInputStream());
             response = convertStreamToString(in);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ServerTerminatedException("Server has stoped");
         }
         return response;
+    }
+    private static boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        }
+        catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        return false;
     }
 }

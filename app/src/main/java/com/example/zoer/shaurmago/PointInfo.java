@@ -11,6 +11,8 @@ import android.util.Pair;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.zoer.shaurmago.exceptions.NoInternetConnectionException;
+import com.example.zoer.shaurmago.exceptions.ServerTerminatedException;
 import com.example.zoer.shaurmago.services.ServerConncection;
 
 import org.json.JSONArray;
@@ -38,12 +40,10 @@ public class PointInfo extends Activity {
         JSONArray arr = null;
         try {
             arr = new DownloadPointInfoTask().execute(value).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        if (arr.length() == 1) {
+        if (arr != null && arr.length() == 1) {
             try {
                 new DownloadImageTask(img).execute(arr.getJSONObject(0).getString("photo"));
                 txt.append(arr.getJSONObject(0).getString("desc"));
@@ -85,7 +85,7 @@ public class PointInfo extends Activity {
             JSONArray arr = null;
             try {
                 arr = new JSONArray(ServerConncection.getResponse(getString(R.string.get_point_info), new Pair<String, String>("id", params[0])));
-            } catch (JSONException e) {
+            } catch (JSONException | ServerTerminatedException | NoInternetConnectionException e) {
                 e.printStackTrace();
             }
             return arr;

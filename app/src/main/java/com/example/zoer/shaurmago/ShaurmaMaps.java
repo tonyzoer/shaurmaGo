@@ -2,11 +2,15 @@ package com.example.zoer.shaurmago;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
+import android.view.View;
 
+import com.example.zoer.shaurmago.exceptions.NoInternetConnectionException;
+import com.example.zoer.shaurmago.exceptions.ServerTerminatedException;
 import com.example.zoer.shaurmago.services.ServerConncection;
 import com.example.zoer.shaurmago.services.StringHelper;
 import com.google.android.gms.maps.GoogleMap;
@@ -43,6 +47,20 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addPoint);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(LatLng latLng) {
+                        mMap.addMarker(new MarkerOptions().position(latLng));
+
+                    }
+                });
+            }
+        });
     }
 
 
@@ -82,47 +100,47 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
             mMap = googleMap;
         }
 
+        //TODO COMMENT ALL THIS SHIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         @Override
         protected JSONArray doInBackground(Void... params) {
             JSONArray arr = null;
             ObjectInputStream in = null;
-            Integer countonserv = null;
-            Integer countonlocal = null;
+            Integer countonserv = 0;
+            Integer countonlocal = 0;
+            //If you have already saved points, it takes info from cache
             try {
                 in = new ObjectInputStream(new FileInputStream(new File(new File(getCacheDir(), "") + "shaurmaPoints.srl")));
                 arr = new JSONArray((String) in.readObject());
                 in.close();
                 countonlocal = arr.length();
             } catch (IOException e) {
-//                    e.printStackTrace();
                 Log.d("Nofile", "File not found in cache");
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
+            //if nothing was cached it downloads points from server
             try {
+                boolean downloaded = false;
                 if (arr == null) {
                     arr = new JSONArray(ServerConncection.getResponse(getString(R.string.get_all_points)));
-                    ObjectOutput out = new ObjectOutputStream(new FileOutputStream(new File(getCacheDir(), "") + "shaurmaPoints.srl"));
-                    out.writeObject(arr.toString());
-                    out.close();
+                    countonlocal = arr.length();
+                    countonserv = arr.length();
+                    downloaded = true;
                 }
-                try {
-                    for (int i = 0; i < arr.length(); i++) {
+                for (int i = 0; i < arr.length(); i++) {
 
-                        JSONObject obj = arr.getJSONObject(i);
-                        LatLng pos = new LatLng(obj.getDouble("Lat"),
-                                obj.getDouble("Lng"));
-                        publishProgress(new Pair<LatLng, Pair<String, String>>(pos, new Pair<String, String>(obj.getString("name"), obj.getString("id"))));
-                    }
+                    JSONObject obj = arr.getJSONObject(i);
+                    LatLng pos = new LatLng(obj.getDouble("Lat"),
+                            obj.getDouble("Lng"));
+                    publishProgress(new Pair<LatLng, Pair<String, String>>(pos, new Pair<String, String>(obj.getString("name"), obj.getString("id"))));
+                }
+                if (!downloaded) {
                     countonserv = new JSONArray(ServerConncection.getResponse(getString(R.string.get_points_count))).getJSONObject(0).getInt("COUNT(id)");
+                    //if count on server is diferent , we download it from net if it wasnt downloaded earlier
                     if (countonserv != countonlocal) {
                         arr = new JSONArray(ServerConncection.getResponse(getString(R.string.get_all_points)));
-                        ObjectOutput out = new ObjectOutputStream(new FileOutputStream(new File(getCacheDir(), "") + "shaurmaPoints.srl"));
-                        out.writeObject(arr.toString());
-                        out.close();
                         countonserv = arr.length();
                         for (int i = 0; i < arr.length(); i++) {
                             JSONObject obj = arr.getJSONObject(i);
@@ -131,16 +149,21 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
                             publishProgress(new Pair<LatLng, Pair<String, String>>(pos, new Pair<String, String>(obj.getString("name"), obj.getString("id"))));
                         }
                     }
-                } catch (JSONException e) {
-
-                    e.printStackTrace();
                 }
+                //Write to cache
+                ObjectOutput out = new ObjectOutputStream(new FileOutputStream(new File(getCacheDir(), "") + "shaurmaPoints.srl"));
+                out.writeObject(arr.toString());
+                out.close();
 
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ServerTerminatedException e) {
+                e.printStackTrace();
+            } catch (NoInternetConnectionException e) {
                 e.printStackTrace();
             }
 

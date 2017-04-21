@@ -31,11 +31,10 @@
 
         <activity
             android:name=".ShaurmaMaps"
-            android:label="@string/title_activity_shaurma_maps">
-        </activity>
+            android:label="@string/title_activity_shaurma_maps"></activity>
         <activity
             android:name=".PointInfo"
-            android:label="PointInfo"></activity>
+            android:label="PointInfo" />
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
@@ -46,6 +45,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".add_new_point"
+            android:label="@string/title_activity_add_new_point"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
