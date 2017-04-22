@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.zoer.shaurmago.exceptions.NoInternetConnectionException;
 import com.example.zoer.shaurmago.exceptions.ServerTerminatedException;
@@ -155,15 +156,23 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
                 out.writeObject(arr.toString());
                 out.close();
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (JSONException | IOException e) {
                 e.printStackTrace();
             } catch (ServerTerminatedException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),"Sorry our server is out of run",Toast.LENGTH_LONG).show();
+                    }
+                });
                 e.printStackTrace();
             } catch (NoInternetConnectionException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),"No Internet Connection",Toast.LENGTH_LONG).show();
+                    }
+                });
                 e.printStackTrace();
             }
 

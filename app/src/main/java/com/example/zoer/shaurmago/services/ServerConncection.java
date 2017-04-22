@@ -83,6 +83,7 @@ public class ServerConncection {
         }
         return response;
     }
+    //TODO Change this, it works unexpeted on diferent devices
     private static boolean isOnline() {
         Runtime runtime = Runtime.getRuntime();
         try {
