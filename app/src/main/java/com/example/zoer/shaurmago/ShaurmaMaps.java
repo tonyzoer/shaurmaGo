@@ -57,7 +57,8 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
                     @Override
                     public void onMapClick(LatLng latLng) {
                         mMap.addMarker(new MarkerOptions().position(latLng));
-
+                        startActivity(new Intent(ShaurmaMaps.this,AddNewPoint.class));
+                        mMap.setOnMapClickListener(null);
                     }
                 });
             }
