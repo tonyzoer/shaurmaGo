@@ -2,10 +2,12 @@ package com.example.zoer.shaurmago;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -14,40 +16,59 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.zoer.shaurmago.Utils.Utility;
+import com.example.zoer.shaurmago.exceptions.NoInternetConnectionException;
+import com.example.zoer.shaurmago.exceptions.ServerTerminatedException;
+import com.example.zoer.shaurmago.services.ServerConncection;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class AddNewPoint extends AppCompatActivity {
     private static int REQUEST_CAMERA = 0, SELECT_FILE = 1;
     private ImageView ivImage;
-
+    private EditText name;
+    private EditText desc;
     private String userChoosenTask;
+    LatLng pos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_point);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ivImage= (ImageView) findViewById(R.id.prewiewaddphoto);
+        ivImage = (ImageView) findViewById(R.id.prewiewaddphoto);
+        name = (EditText) findViewById(R.id.edit_name);
+        desc = (EditText) findViewById(R.id.Desc);
+        Bundle b = getIntent().getExtras();
+        if (b != null)
+            pos = (LatLng) b.get("latlng");
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                HashMap<String,String> map=new HashMap<String, String>();
+                map.put("name",name.getText().toString());
+                map.put("desc",desc.getText().toString());
+                map.put("base64",toBase64(ivImage.getDrawingCache()));
+                new SendData().execute(map);
             }
         });
-        Button addphotobtn= (Button) findViewById(R.id.addPhoto);
+        Button addphotobtn = (Button) findViewById(R.id.addPhoto);
         addphotobtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,8 +79,8 @@ public class AddNewPoint extends AppCompatActivity {
 
 
     private void selectImage() {
-        final CharSequence[] items = { "Take Photo", "Choose from Library",
-                "Cancel" };
+        final CharSequence[] items = {"Take Photo", "Choose from Library",
+                "Cancel"};
         AlertDialog.Builder builder = new AlertDialog.Builder(AddNewPoint.this);
         builder.setTitle("Add Photo!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
@@ -67,13 +88,13 @@ public class AddNewPoint extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int item) {
 //                boolean result= Utility.checkPermission(AddNewPoint.this);
                 if (items[item].equals("Take Photo")) {
-                    userChoosenTask="Take Photo";
+                    userChoosenTask = "Take Photo";
 //                    if(result)
-                        cameraIntent();
+                    cameraIntent();
                 } else if (items[item].equals("Choose from Library")) {
-                    userChoosenTask="Choose from Library";
+                    userChoosenTask = "Choose from Library";
 //                    if(result)
-                        galleryIntent();
+                    galleryIntent();
                 } else if (items[item].equals("Cancel")) {
                     dialog.dismiss();
                 }
@@ -86,14 +107,13 @@ public class AddNewPoint extends AppCompatActivity {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);//
-        startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
+        startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
 
     }
 
-    private void cameraIntent()
-    {
+    private void cameraIntent() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent,REQUEST_CAMERA);
+        startActivityForResult(intent, REQUEST_CAMERA);
     }
 
     @Override
@@ -101,9 +121,9 @@ public class AddNewPoint extends AppCompatActivity {
         switch (requestCode) {
             case Utility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if(userChoosenTask.equals("Take Photo"))
+                    if (userChoosenTask.equals("Take Photo"))
                         cameraIntent();
-                    else if(userChoosenTask.equals("Choose from Library"))
+                    else if (userChoosenTask.equals("Choose from Library"))
                         galleryIntent();
                 } else {
                     //code for deny
@@ -111,6 +131,7 @@ public class AddNewPoint extends AppCompatActivity {
                 break;
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -142,11 +163,11 @@ public class AddNewPoint extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        final String s=destination.getAbsolutePath();
+        final String s = destination.getAbsolutePath();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(),s,Toast.LENGTH_LONG);
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG);
             }
         });
         ivImage.setImageBitmap(thumbnail);
@@ -155,7 +176,7 @@ public class AddNewPoint extends AppCompatActivity {
     @SuppressWarnings("deprecation")
     private void onSelectFromGalleryResult(Intent data) {
 
-        Bitmap bm=null;
+        Bitmap bm = null;
         if (data != null) {
             try {
                 bm = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
@@ -166,8 +187,56 @@ public class AddNewPoint extends AppCompatActivity {
         ivImage.setImageBitmap(bm);
     }
 
-    private boolean sendData(String name,String desc){
 
-        return true;
+    private String toBase64(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
+    private class SendData extends AsyncTask<HashMap<String,String>,Integer,Void> {
+        ProgressDialog prgd=null;
+        @Override
+        protected Void doInBackground(HashMap<String,String>... params) {
+            HashMap<String,String> map=params[0];
+            try {
+                publishProgress(10);
+                String id= ServerConncection.postData(getString(R.string.add_new_point),
+                        new Pair<String, String>("name", map.get("name")),
+                        new Pair<String, String>("Lat", String.valueOf(pos.latitude)),
+                        new Pair<String, String>("Lng", String.valueOf(pos.longitude)));
+                publishProgress(40);
+                ServerConncection.postData(getString(R.string.add_new_point_info),
+                        new Pair<String, String>("id", id),
+                        new Pair<String, String>("desc",map.get("desc")),
+                        new Pair<String, String>("base64", map.get("base64")));
+                publishProgress(95);
+            } catch (NoInternetConnectionException e) {
+                e.printStackTrace();
+            } catch (ServerTerminatedException e) {
+                e.printStackTrace();
+            }
+            publishProgress(100);
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+          prgd=ProgressDialog.show(AddNewPoint.this,"Uploading...","Please wait...",false,false);
+            prgd.setMax(100);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            prgd.setProgress(values[0]);
+        }
+    }
+
 }
