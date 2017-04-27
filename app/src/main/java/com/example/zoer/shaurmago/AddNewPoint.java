@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.zoer.shaurmago.Utils.ImageUtil;
 import com.example.zoer.shaurmago.Utils.Utility;
 import com.example.zoer.shaurmago.exceptions.NoInternetConnectionException;
 import com.example.zoer.shaurmago.exceptions.ServerTerminatedException;
@@ -64,8 +65,7 @@ public class AddNewPoint extends AppCompatActivity {
                 HashMap<String,String> map=new HashMap<String, String>();
                 map.put("name",name.getText().toString());
                 map.put("desc",desc.getText().toString());
-                map.put("base64",toBase64(ivImage.getDrawingCache()));
-                new SendData().execute(map);
+                new SendData().execute(new Pair<HashMap<String, String>, Bitmap>(map,ivImage.getDrawingCache()));
             }
         });
         Button addphotobtn = (Button) findViewById(R.id.addPhoto);
@@ -187,18 +187,11 @@ public class AddNewPoint extends AppCompatActivity {
         ivImage.setImageBitmap(bm);
     }
 
-
-    private String toBase64(Bitmap bitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
-    }
-    private class SendData extends AsyncTask<HashMap<String,String>,Integer,Void> {
+    private class SendData extends AsyncTask<Pair<HashMap<String,String>,Bitmap>,Integer,Void> {
         ProgressDialog prgd=null;
         @Override
-        protected Void doInBackground(HashMap<String,String>... params) {
-            HashMap<String,String> map=params[0];
+        protected Void doInBackground(Pair<HashMap<String,String>,Bitmap>... params) {
+            HashMap<String,String> map=params[0].first;
             try {
                 publishProgress(10);
                 String id= ServerConncection.postData(getString(R.string.add_new_point),
@@ -209,7 +202,7 @@ public class AddNewPoint extends AppCompatActivity {
                 ServerConncection.postData(getString(R.string.add_new_point_info),
                         new Pair<String, String>("id", id),
                         new Pair<String, String>("desc",map.get("desc")),
-                        new Pair<String, String>("base64", map.get("base64")));
+                        new Pair<String, String>("base64", ImageUtil.convert(params[0].second)));
                 publishProgress(95);
             } catch (NoInternetConnectionException e) {
                 e.printStackTrace();
