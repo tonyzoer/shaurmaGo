@@ -17,6 +17,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +29,7 @@ import com.example.zoer.shaurmago.Utils.ImageUtil;
 import com.example.zoer.shaurmago.Utils.Utility;
 import com.example.zoer.shaurmago.exceptions.NoInternetConnectionException;
 import com.example.zoer.shaurmago.exceptions.ServerTerminatedException;
+import com.example.zoer.shaurmago.services.Request;
 import com.example.zoer.shaurmago.services.ServerConncection;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -45,7 +47,7 @@ public class AddNewPoint extends AppCompatActivity {
     private EditText desc;
     private String userChoosenTask;
     LatLng pos;
-
+    private static final String TAG = AddNewPoint.class.getSimpleName();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,11 +64,8 @@ public class AddNewPoint extends AppCompatActivity {
         fab.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                HashMap<String,String> map=new HashMap<String, String>();
-                map.put("name",name.getText().toString());
-                map.put("desc",desc.getText().toString());
                 ivImage.buildDrawingCache();
-                new SendData().execute(new Pair<HashMap<String, String>, Bitmap>(map,ivImage.getDrawingCache()));
+                new Upload(ivImage.getDrawingCache(),name.getText().toString(),desc.getText().toString()).execute();
             }
         });
         Button addphotobtn = (Button) findViewById(R.id.addPhoto);
@@ -187,51 +186,65 @@ public class AddNewPoint extends AppCompatActivity {
         ivImage.setImageBitmap(bm);
     }
 
-    private class SendData extends AsyncTask<Pair<HashMap<String,String>,Bitmap>,Integer,Void> {
-        ProgressDialog prgd=null;
+    private class Upload extends AsyncTask<Void,Void,String>{
+        private Bitmap image;
+        private String name;
+        private String desc;
+        private LatLng latlng;
+
+        public Upload(Bitmap image,String name,String desc){
+            this.image = image;
+            this.name = name;
+            this.desc=desc;
+            this.latlng=pos;
+        }
+
         @Override
-        protected Void doInBackground(Pair<HashMap<String,String>,Bitmap>... params) {
-            HashMap<String,String> map=params[0].first;
-            try {
-                publishProgress(10);
-                String id= ServerConncection.postData(getString(R.string.add_new_point),
-                        new Pair<String, String>("name", map.get("name")),
-                        new Pair<String, String>("Lat", String.valueOf(pos.latitude)),
-                        new Pair<String, String>("Lng", String.valueOf(pos.longitude)));
-                publishProgress(40);
-                id=id.replaceAll("\\n","");
-                    ServerConncection.postData(getString(R.string.add_new_point_info),
-                        new Pair<String, String>("id", id),
-                        new Pair<String, String>("desc",map.get("desc")),
-                        new Pair<String, String>("base64", ImageUtil.convert(params[0].second)));
-                publishProgress(95);
-            } catch (NoInternetConnectionException e) {
+        protected String doInBackground(Void... params) {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            //compress the image to jpg format
+            image.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
+            /*
+            * encode image to base64 so that it can be picked by saveImage.php file
+            * */
+
+            String encodeImage = Base64.encodeToString(byteArrayOutputStream.toByteArray(),Base64.DEFAULT);
+
+            //generate hashMap to store encodedImage and the name
+
+            HashMap<String,String> detail = new HashMap<>();
+            detail.put("name", name);
+            detail.put("image", encodeImage);
+            detail.put("desc", desc);
+            detail.put("lat",String.valueOf(latlng.latitude));
+            detail.put("lng",String.valueOf(latlng.longitude));
+
+            try{
+                //convert this HashMap to encodedUrl to send to php file
+
+                String dataToSend = Request.hashMapToUrl(detail);
+                //make a Http request and send data to saveImage.php file
+
+                String response = Request.post(getString(R.string.add_new_point_info),dataToSend);
+
+                //return the response
+
+                return response;
+
+            }catch (Exception e){
                 e.printStackTrace();
-            } catch (ServerTerminatedException e) {
-                e.printStackTrace();
+                Log.e(TAG,"ERROR  "+e);
+                return null;
             }
-            publishProgress(100);
-            return null;
         }
+
+
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-          prgd=ProgressDialog.show(AddNewPoint.this,"Uploading...","Please wait...",false,false);
-            prgd.setMax(100);
+        protected void onPostExecute(String s) {
+            //show image uploaded
+                Toast.makeText(getApplicationContext(),"Image Uploaded"+s,Toast.LENGTH_SHORT).show();
         }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            prgd.setProgress(values[0]);
-
-        }
-    }
-
+}
 }

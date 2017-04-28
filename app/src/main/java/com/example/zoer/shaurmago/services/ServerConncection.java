@@ -54,23 +54,24 @@ public class ServerConncection {
         }
         URL url = null;
         StringBuilder urlbuilder=new StringBuilder(urls);
-//        try {
-//            int i=0;
-//            for (Pair<String,String> pair:pairs
-//                    ) {
-//                if (i==0){
-//                    urlbuilder.append("?");
-//                }
-//                urlbuilder.append(pair.first+"="+pair.second);
-//                i++;
-//                if (i<pairs.length){
-//                    urlbuilder.append("&");
-//                }
-//            }
-//            url = new URL(urlbuilder.toString());
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            int i=0;
+            for (Pair<String,String> pair:pairs
+                    ) {
+                if (i==0){
+                    urlbuilder.append("?");
+                }
+                urlbuilder.append(pair.first+"="+pair.second);
+                i++;
+                if (i<pairs.length){
+                    urlbuilder.append("&");
+                }
+            }
+            url = new URL(urlbuilder.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
         HttpURLConnection conn = null;
         String response = null;
         try {

@@ -45,7 +45,7 @@ public class PointInfo extends Activity {
         }
         if (arr != null && arr.length() == 1) {
             try {
-                new DownloadImageTask(img).execute(arr.getJSONObject(0).getString("photo"));
+                new DownloadImageTask(img).execute(getString(R.string.server)+arr.getJSONObject(0).getString("photo"));
                 txt.append(arr.getJSONObject(0).getString("desc"));
             } catch (JSONException e) {
                 e.printStackTrace();
