@@ -65,6 +65,7 @@ public class AddNewPoint extends AppCompatActivity {
                 HashMap<String,String> map=new HashMap<String, String>();
                 map.put("name",name.getText().toString());
                 map.put("desc",desc.getText().toString());
+                ivImage.buildDrawingCache();
                 new SendData().execute(new Pair<HashMap<String, String>, Bitmap>(map,ivImage.getDrawingCache()));
             }
         });
@@ -151,7 +152,6 @@ public class AddNewPoint extends AppCompatActivity {
 
         File destination = new File(Environment.getExternalStorageDirectory(),
                 System.currentTimeMillis() + ".jpg");
-
         FileOutputStream fo;
         try {
             destination.createNewFile();
@@ -199,7 +199,8 @@ public class AddNewPoint extends AppCompatActivity {
                         new Pair<String, String>("Lat", String.valueOf(pos.latitude)),
                         new Pair<String, String>("Lng", String.valueOf(pos.longitude)));
                 publishProgress(40);
-                ServerConncection.postData(getString(R.string.add_new_point_info),
+                id=id.replaceAll("\\n","");
+                    ServerConncection.postData(getString(R.string.add_new_point_info),
                         new Pair<String, String>("id", id),
                         new Pair<String, String>("desc",map.get("desc")),
                         new Pair<String, String>("base64", ImageUtil.convert(params[0].second)));
@@ -229,6 +230,7 @@ public class AddNewPoint extends AppCompatActivity {
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
             prgd.setProgress(values[0]);
+
         }
     }
 
