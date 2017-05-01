@@ -22,7 +22,7 @@ public class Request {
 
     private static final String TAG = Request.class.getSimpleName();
 
-    public static String post(String serverUrl,String dataToSend){
+    public static String post(String serverUrl, String dataToSend) {
         try {
             URL url = new URL(serverUrl);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -34,7 +34,7 @@ public class Request {
             con.setDoOutput(true);
 
             OutputStream os = con.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os,"UTF-8"));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
             //make request
             writer.write(dataToSend);
@@ -45,7 +45,7 @@ public class Request {
             //get the response
             int responseCode = con.getResponseCode();
 
-            if(responseCode == HttpURLConnection.HTTP_OK){
+            if (responseCode == HttpURLConnection.HTTP_OK) {
                 //read the response
                 StringBuilder sb = new StringBuilder();
 
@@ -54,27 +54,28 @@ public class Request {
                 String line;
 
                 //loop through the response from the server
-                while ((line = reader.readLine()) != null){
+                while ((line = reader.readLine()) != null) {
                     sb.append(line).append("\n");
                 }
 
                 //return the response
                 return sb.toString();
-            }else{
-                Log.e(TAG,"ERROR - Invalid response code from server "+ responseCode);
+            } else {
+                Log.e(TAG, "ERROR - Invalid response code from server " + responseCode);
                 return null;
             }
 
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e(TAG,"ERROR "+e);
+            Log.e(TAG, "ERROR " + e);
             return null;
         }
     }
+
     public static String hashMapToUrl(HashMap<String, String> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
         boolean first = true;
-        for(Map.Entry<String, String> entry : params.entrySet()){
+        for (Map.Entry<String, String> entry : params.entrySet()) {
             if (first)
                 first = false;
             else

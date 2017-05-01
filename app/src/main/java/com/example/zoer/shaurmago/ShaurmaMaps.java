@@ -2,9 +2,9 @@ package com.example.zoer.shaurmago;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.example.zoer.shaurmago.exceptions.NoInternetConnectionException;
 import com.example.zoer.shaurmago.exceptions.ServerTerminatedException;
-import com.example.zoer.shaurmago.services.ServerConncection;
+import com.example.zoer.shaurmago.services.ServerConnection;
 import com.example.zoer.shaurmago.services.StringHelper;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -27,7 +27,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -57,7 +56,7 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
                     @Override
                     public void onMapClick(LatLng latLng) {
                         mMap.addMarker(new MarkerOptions().position(latLng));
-                        startActivity(new Intent(ShaurmaMaps.this,AddNewPoint.class).putExtra("latlng",latLng));
+                        startActivity(new Intent(ShaurmaMaps.this, AddNewPoint.class).putExtra("latlng", latLng));
                         mMap.setOnMapClickListener(null);
                     }
                 });
@@ -88,47 +87,48 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                startActivity(new Intent(ShaurmaMaps.this, PointInfo.class).putExtra("id", marker.getSnippet()));
+                startActivity(new Intent(ShaurmaMaps.this, PointInfo.class).putExtra("id",
+                        marker.getSnippet()));
                 return false;
             }
         });
     }
 
-    class PointGetter extends AsyncTask<Void, Pair<LatLng, Pair<String, String>>, JSONArray> {
-        private String urlGet = "https://shaurma-go-server-okamanahi.c9users.io/getallpoints.php";
+    private class PointGetter extends AsyncTask<Void, Pair<LatLng, Pair<String, String>>, JSONArray> {
         GoogleMap mMap = null;
+        private String urlGet = "https://shaurma-go-server-okamanahi.c9users.io/getallpoints.php";
 
-        public PointGetter(GoogleMap googleMap) {
+        PointGetter(GoogleMap googleMap) {
             mMap = googleMap;
         }
 
-        //TODO COMMENT ALL THIS SHIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //TODO: COMMENT ALL THIS SHIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         @Override
         protected JSONArray doInBackground(Void... params) {
             JSONArray arr = null;
-            ObjectInputStream in = null;
-            Integer countonserv = 0;
-            Integer countonlocal = 0;
+            ObjectInputStream in;
+            Integer countOnServer;
+            Integer countOnLocal = 0;
             //If you have already saved points, it takes info from cache
             try {
-                in = new ObjectInputStream(new FileInputStream(new File(new File(getCacheDir(), "") + "shaurmaPoints.srl")));
+                in = new ObjectInputStream(new FileInputStream(new File(
+                        new File(getCacheDir(), "") + "shaurmaPoints.srl")));
                 arr = new JSONArray((String) in.readObject());
                 in.close();
-                countonlocal = arr.length();
+                countOnLocal = arr.length();
             } catch (IOException e) {
                 Log.d("Nofile", "File not found in cache");
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
+            } catch (ClassNotFoundException | JSONException e) {
                 e.printStackTrace();
             }
             //if nothing was cached it downloads points from server
             try {
                 boolean downloaded = false;
                 if (arr == null) {
-                    arr = new JSONArray(ServerConncection.getResponse(getString(R.string.get_all_points)));
-                    countonlocal = arr.length();
-                    countonserv = arr.length();
+                    arr = new JSONArray(ServerConnection.getResponse(
+                            getString(R.string.get_all_points)));
+                    countOnLocal = arr.length();
+                    countOnServer = arr.length();
                     downloaded = true;
                 }
                 for (int i = 0; i < arr.length(); i++) {
@@ -136,34 +136,40 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
                     JSONObject obj = arr.getJSONObject(i);
                     LatLng pos = new LatLng(obj.getDouble("Lat"),
                             obj.getDouble("Lng"));
-                    publishProgress(new Pair<LatLng, Pair<String, String>>(pos, new Pair<String, String>(obj.getString("name"), obj.getString("id"))));
+                    publishProgress(new Pair<>(
+                            pos, new Pair<>(obj.getString("name"), obj.getString("id"))));
                 }
                 if (!downloaded) {
-                    countonserv = new JSONArray(ServerConncection.getResponse(getString(R.string.get_points_count))).getJSONObject(0).getInt("COUNT(id)");
-                    //if count on server is diferent , we download it from net if it wasnt downloaded earlier
-                    if (countonserv != countonlocal) {
-                        arr = new JSONArray(ServerConncection.getResponse(getString(R.string.get_all_points)));
-                        countonserv = arr.length();
+                    countOnServer = new JSONArray(ServerConnection.getResponse(
+                            getString(R.string.get_points_count))).getJSONObject(0).getInt("COUNT(id)");
+                    //if count on server is different , we download it from net if it wasnt downloaded earlier
+                    if (countOnServer.equals(countOnLocal)) {
+                        arr = new JSONArray(ServerConnection.getResponse(
+                                getString(R.string.get_all_points)));
+                        countOnServer = arr.length();
                         for (int i = 0; i < arr.length(); i++) {
                             JSONObject obj = arr.getJSONObject(i);
                             LatLng pos = new LatLng(obj.getDouble("Lat"),
                                     obj.getDouble("Lng"));
-                            publishProgress(new Pair<LatLng, Pair<String, String>>(pos, new Pair<String, String>(obj.getString("name"), obj.getString("id"))));
+                            publishProgress(new Pair<>(
+                                    pos, new Pair<>(obj.getString("name"),
+                                    obj.getString("id"))));
                         }
                     }
                 }
                 //Write to cache
-                ObjectOutput out = new ObjectOutputStream(new FileOutputStream(new File(getCacheDir(), "") + "shaurmaPoints.srl"));
+                ObjectOutput out = new ObjectOutputStream(
+                        new FileOutputStream(new File(getCacheDir(), "") + "shaurmaPoints.srl"));
                 out.writeObject(arr.toString());
                 out.close();
-
             } catch (JSONException | IOException e) {
                 e.printStackTrace();
             } catch (ServerTerminatedException e) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(),"Sorry our server is out of run",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),
+                                "Sorry our server is out of run", Toast.LENGTH_LONG).show();
                     }
                 });
                 e.printStackTrace();
@@ -171,7 +177,8 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(),"No Internet Connection",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),
+                                "No Internet Connection", Toast.LENGTH_LONG).show();
                     }
                 });
                 e.printStackTrace();
@@ -190,11 +197,13 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
             super.onPostExecute(jsonArray);
         }
 
+        @SafeVarargs
         @Override
-        protected void onProgressUpdate(Pair<LatLng, Pair<String, String>>... values) {
-            for (Pair<LatLng, Pair<String, String>> pair : values
-                    ) {
-                mMap.addMarker(new MarkerOptions().position(pair.first).title(StringHelper.fromUtfToRus(pair.second.first)).snippet(pair.second.second));
+        protected final void onProgressUpdate(Pair<LatLng, Pair<String, String>>... values) {
+            for (Pair<LatLng, Pair<String, String>> pair : values) {
+                mMap.addMarker(new MarkerOptions().position(pair.first).
+                        title(StringHelper.fromUtfToRus(pair.second.first)).
+                        snippet(pair.second.second));
             }
             super.onProgressUpdate(values);
         }

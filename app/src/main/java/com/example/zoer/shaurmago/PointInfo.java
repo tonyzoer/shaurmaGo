@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.example.zoer.shaurmago.exceptions.NoInternetConnectionException;
 import com.example.zoer.shaurmago.exceptions.ServerTerminatedException;
-import com.example.zoer.shaurmago.services.ServerConncection;
+import com.example.zoer.shaurmago.services.ServerConnection;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,12 +21,7 @@ import org.json.JSONException;
 import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
 
-/**
- * Created by Zoer on 18.04.2017.
- */
-
 public class PointInfo extends Activity {
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +30,7 @@ public class PointInfo extends Activity {
         TextView txt = (TextView) findViewById(R.id.desc);
         Bundle b = getIntent().getExtras();
         String value = null; // or other values
+
         if (b != null)
             value = b.getString("id");
         JSONArray arr = null;
@@ -45,27 +41,27 @@ public class PointInfo extends Activity {
         }
         if (arr != null && arr.length() == 1) {
             try {
-                new DownloadImageTask(img).execute(getString(R.string.server)+arr.getJSONObject(0).getString("photo"));
+                new DownloadImageTask(img).execute(
+                        getString(R.string.server) + arr.getJSONObject(0).getString("photo"));
                 txt.append(arr.getJSONObject(0).getString("desc"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         }
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 
-        public DownloadImageTask(ImageView bmImage) {
+        DownloadImageTask(ImageView bmImage) {
             this.bmImage = bmImage;
         }
 
         protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
+            String urlDisplay = urls[0];
             Bitmap mIcon11 = null;
             try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
+                InputStream in = new java.net.URL(urlDisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
                 Log.e("Error", e.getMessage());
@@ -84,7 +80,9 @@ public class PointInfo extends Activity {
         protected JSONArray doInBackground(String... params) {
             JSONArray arr = null;
             try {
-                arr = new JSONArray(ServerConncection.getResponse(getString(R.string.get_point_info), new Pair<String, String>("id", params[0])));
+                arr = new JSONArray(
+                        ServerConnection.getResponse(getString(R.string.get_point_info),
+                                new Pair<>("id", params[0])));
             } catch (JSONException | ServerTerminatedException | NoInternetConnectionException e) {
                 e.printStackTrace();
             }
