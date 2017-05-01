@@ -7,10 +7,10 @@
     tools:context="com.example.zoer.shaurmago.AddNewPoint">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        android:id="@+id/appBarLayout">
+        android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -22,13 +22,12 @@
     </android.support.design.widget.AppBarLayout>
 
     <EditText
-        android:id="@+id/edit_name"
+        android:id="@+id/Name"
         android:layout_width="match_parent"
         android:layout_height="54dp"
         android:layout_marginTop="100dp"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name" />
+        android:inputType="textPersonName" />
 
     <EditText
         android:id="@+id/Desc"
@@ -36,54 +35,66 @@
         android:layout_height="115dp"
         android:layout_marginTop="150dp"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Desc" />
+        android:inputType="textPersonName" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/Add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        app:srcCompat="@android:drawable/ic_dialog_map"
-        android:layout_below="@+id/prewiewaddphoto"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/previewAddPhoto"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="18dp"
         android:layout_marginRight="18dp"
-        android:layout_marginEnd="18dp" />
+        app:srcCompat="@android:drawable/ic_menu_save" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/Cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/previewAddPhoto"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="18dp"
+        android:layout_marginStart="18dp"
+        app:srcCompat="@android:drawable/ic_delete" />
 
     <include
         android:id="@+id/include2"
         layout="@layout/content_add_new_point"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/fab"
-        android:layout_toEndOf="@+id/fab"
-        android:layout_marginLeft="38dp"
-        android:layout_marginStart="38dp"
-        android:layout_marginTop="38dp"
-        android:layout_width="match_parent" />
+        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/fab" />
 
     <Button
         android:id="@+id/addPhoto"
         style="@android:style/Widget.Material.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/Desc"
         android:layout_gravity="top|right"
+        android:layout_marginEnd="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="5dp"
         android:text="Add Photo"
         app:layout_anchor="@+id/include2"
         app:layout_anchorGravity="center_vertical|left"
-        android:layout_below="@+id/Desc"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         tools:targetApi="lollipop" />
 
     <ImageView
-        android:id="@+id/prewiewaddphoto"
+        android:id="@+id/previewAddPhoto"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        app:srcCompat="@drawable/ic_menu_gallery"
-        android:layout_below="@+id/addPhoto"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/addPhoto"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/ic_menu_gallery" />
 
 </RelativeLayout>

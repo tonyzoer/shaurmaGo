@@ -51,7 +51,7 @@ public class AddNewPoint extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ivImage = (ImageView) findViewById(R.id.previewAddPhoto);
-        name = (EditText) findViewById(R.id.edit_name);
+        name = (EditText) findViewById(R.id.Name);
         desc = (EditText) findViewById(R.id.Desc);
 
         Bundle b = getIntent().getExtras();
