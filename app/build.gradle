@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.example.zoer.shaurmago"
+        applicationId "com.unicyb.shaurmago"
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
@@ -28,6 +28,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:10.2.0'
     compile 'com.android.support:design:25.3.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'junit:junit:4.12'
     compile 'com.google.android.gms:play-services-ads:10.2.0'
+    compile 'com.google.android.gms:play-services-auth:10.2.0'
+    testCompile 'junit:junit:4.12'
 }

@@ -1,4 +1,4 @@
-package com.example.zoer.shaurmago;
+package com.unicyb.shaurmago;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -10,10 +10,10 @@ import android.util.Pair;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.zoer.shaurmago.exceptions.NoInternetConnectionException;
-import com.example.zoer.shaurmago.exceptions.ServerTerminatedException;
-import com.example.zoer.shaurmago.services.ServerConnection;
-import com.example.zoer.shaurmago.services.StringHelper;
+import com.unicyb.shaurmago.exceptions.NoInternetConnectionException;
+import com.unicyb.shaurmago.exceptions.ServerTerminatedException;
+import com.unicyb.shaurmago.services.ServerConnection;
+import com.unicyb.shaurmago.services.StringHelper;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -143,18 +143,23 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
                     countOnServer = new JSONArray(ServerConnection.getResponse(
                             getString(R.string.get_points_count))).getJSONObject(0).getInt("COUNT(id)");
                     //if count on server is different , we download it from net if it wasnt downloaded earlier
-                    if (countOnServer.equals(countOnLocal)) {
-                        arr = new JSONArray(ServerConnection.getResponse(
-                                getString(R.string.get_all_points)));
-                        countOnServer = arr.length();
-                        for (int i = 0; i < arr.length(); i++) {
-                            JSONObject obj = arr.getJSONObject(i);
-                            LatLng pos = new LatLng(obj.getDouble("Lat"),
-                                    obj.getDouble("Lng"));
-                            publishProgress(new Pair<>(
-                                    pos, new Pair<>(obj.getString("name"),
-                                    obj.getString("id"))));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mMap.clear();
                         }
+                    });
+
+                    arr = new JSONArray(ServerConnection.getResponse(
+                            getString(R.string.get_all_points)));
+                    countOnServer = arr.length();
+                    for (int i = 0; i < arr.length(); i++) {
+                        JSONObject obj = arr.getJSONObject(i);
+                        LatLng pos = new LatLng(obj.getDouble("Lat"),
+                                obj.getDouble("Lng"));
+                        publishProgress(new Pair<>(
+                                pos, new Pair<>(obj.getString("name"),
+                                obj.getString("id"))));
                     }
                 }
                 //Write to cache

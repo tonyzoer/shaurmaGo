@@ -1,4 +1,4 @@
-package com.example.zoer.shaurmago;
+package com.unicyb.shaurmago;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -11,9 +11,9 @@ import android.util.Pair;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.zoer.shaurmago.exceptions.NoInternetConnectionException;
-import com.example.zoer.shaurmago.exceptions.ServerTerminatedException;
-import com.example.zoer.shaurmago.services.ServerConnection;
+import com.unicyb.shaurmago.exceptions.NoInternetConnectionException;
+import com.unicyb.shaurmago.exceptions.ServerTerminatedException;
+import com.unicyb.shaurmago.services.ServerConnection;
 
 import org.json.JSONArray;
 import org.json.JSONException;

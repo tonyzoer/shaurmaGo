@@ -1,4 +1,4 @@
-package com.example.zoer.shaurmago.Utils;
+package com.unicyb.shaurmago.Utils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;

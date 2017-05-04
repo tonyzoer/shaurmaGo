@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.zoer.shaurmago.MainActivity"
+    tools:context="com.unicyb.shaurmago.MainActivity"
     tools:showIn="@layout/app_bar_main">
-
 </android.support.constraint.ConstraintLayout>

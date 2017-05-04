@@ -1,4 +1,4 @@
-package com.example.zoer.shaurmago;
+package com.unicyb.shaurmago;
 
 import org.junit.Test;
 

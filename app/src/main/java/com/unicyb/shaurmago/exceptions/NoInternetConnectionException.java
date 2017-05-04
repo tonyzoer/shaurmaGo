@@ -1,4 +1,4 @@
-package com.example.zoer.shaurmago.exceptions;
+package com.unicyb.shaurmago.exceptions;
 
 public class NoInternetConnectionException extends Exception {
 }

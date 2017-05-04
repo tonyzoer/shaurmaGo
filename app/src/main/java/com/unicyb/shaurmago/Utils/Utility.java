@@ -1,4 +1,4 @@
-package com.example.zoer.shaurmago.Utils;
+package com.unicyb.shaurmago.Utils;
 
 import android.Manifest;
 import android.annotation.TargetApi;

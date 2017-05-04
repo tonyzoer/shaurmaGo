@@ -1,9 +1,9 @@
-package com.example.zoer.shaurmago.services;
+package com.unicyb.shaurmago.services;
 
 import android.util.Pair;
 
-import com.example.zoer.shaurmago.exceptions.NoInternetConnectionException;
-import com.example.zoer.shaurmago.exceptions.ServerTerminatedException;
+import com.unicyb.shaurmago.exceptions.NoInternetConnectionException;
+import com.unicyb.shaurmago.exceptions.ServerTerminatedException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

@@ -1,4 +1,4 @@
-package com.example.zoer.shaurmago.models;
+package com.unicyb.shaurmago.models;
 
 public class AsyncTaskResult<T> {
     private T result;

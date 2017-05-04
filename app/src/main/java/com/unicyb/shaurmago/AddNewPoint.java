@@ -1,4 +1,4 @@
-package com.example.zoer.shaurmago;
+package com.unicyb.shaurmago;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,8 +22,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.zoer.shaurmago.Utils.Utility;
-import com.example.zoer.shaurmago.services.Request;
+import com.unicyb.shaurmago.Utils.Utility;
+import com.unicyb.shaurmago.services.Request;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.ByteArrayOutputStream;
@@ -58,7 +58,7 @@ public class AddNewPoint extends AppCompatActivity {
         if (b != null) {
             pos = (LatLng) b.get("latlng");
         }
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.Add);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
