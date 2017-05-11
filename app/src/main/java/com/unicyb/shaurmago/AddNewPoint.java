@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -171,6 +173,7 @@ public class AddNewPoint extends AppCompatActivity {
             }
         });
         ivImage.setImageBitmap(thumbnail);
+        ivImage.setImageDrawable(new BitmapDrawable(thumbnail));
     }
 
     @SuppressWarnings("deprecation")
@@ -186,6 +189,8 @@ public class AddNewPoint extends AppCompatActivity {
             }
         }
         ivImage.setImageBitmap(bm);
+        ivImage.setImageDrawable(new BitmapDrawable(bm));
+
     }
 
     private class Upload extends AsyncTask<Void, Void, String> {
