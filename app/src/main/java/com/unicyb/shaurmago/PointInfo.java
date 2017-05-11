@@ -8,9 +8,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Pair;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.unicyb.shaurmago.Utils.Utility;
 import com.unicyb.shaurmago.exceptions.NoInternetConnectionException;
 import com.unicyb.shaurmago.exceptions.ServerTerminatedException;
 import com.unicyb.shaurmago.services.ServerConnection;
@@ -22,6 +25,7 @@ import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
 
 public class PointInfo extends Activity {
+    ListView commentsList = null;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +34,13 @@ public class PointInfo extends Activity {
         TextView txt = (TextView) findViewById(R.id.desc);
         Bundle b = getIntent().getExtras();
         String value = null; // or other values
+
+        String[] comments = {"nice", "wow", "so good!", "nice", "wow", "so good!", "nice", "wow", "so good!"};
+        commentsList = (ListView) findViewById(R.id.commentsList);
+        Utility.setListViewHeight(commentsList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                (this, android.R.layout.simple_list_item_1, comments);
+        commentsList.setAdapter(adapter);
 
         if (b != null)
             value = b.getString("id");
