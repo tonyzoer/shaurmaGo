@@ -173,7 +173,6 @@ public class AddNewPoint extends AppCompatActivity {
             }
         });
         ivImage.setImageBitmap(thumbnail);
-        ivImage.setImageDrawable(new BitmapDrawable(thumbnail));
     }
 
     @SuppressWarnings("deprecation")
@@ -189,7 +188,6 @@ public class AddNewPoint extends AppCompatActivity {
             }
         }
         ivImage.setImageBitmap(bm);
-        ivImage.setImageDrawable(new BitmapDrawable(bm));
 
     }
 
