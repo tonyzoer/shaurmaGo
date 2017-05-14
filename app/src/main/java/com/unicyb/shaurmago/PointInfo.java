@@ -14,14 +14,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.unicyb.shaurmago.Utils.Utility;
+import com.unicyb.shaurmago.adapters.CommentsAdapter;
 import com.unicyb.shaurmago.exceptions.NoInternetConnectionException;
 import com.unicyb.shaurmago.exceptions.ServerTerminatedException;
+import com.unicyb.shaurmago.models.CommentModel;
 import com.unicyb.shaurmago.services.ServerConnection;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class PointInfo extends Activity {
@@ -35,11 +38,16 @@ public class PointInfo extends Activity {
         Bundle b = getIntent().getExtras();
         String value = null; // or other values
 
-        String[] comments = {"nice", "wow", "so good!", "nice", "wow", "so good!", "nice", "wow", "so good!"};
+        ArrayList<CommentModel> arrayList=new ArrayList<>();
+        arrayList.add(new CommentModel("First User","LAldasldlasldlasfdsdl",4.5));
+        arrayList.add(new CommentModel("Second User","LAldasfdsfdsfdsfldlasldlasdl",3.5));
+        arrayList.add(new CommentModel("Thid User","LAdsfsdfldasldlasldlasdl",3.5));
+        arrayList.add(new CommentModel("First User","LAldasldlasldladsfsfhgsdfgsdl",1.5));
+        arrayList.add(new CommentModel("First User","LAldasldlasldladsfsfhgsdfgsdl",0.5));
+        arrayList.add(new CommentModel("First User","LAldasldlasldladsfsfhgsdfgsdl",0.49));
         commentsList = (ListView) findViewById(R.id.commentsList);
         Utility.setListViewHeight(commentsList);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>
-                (this, android.R.layout.simple_list_item_1, comments);
+        CommentsAdapter adapter=new CommentsAdapter(arrayList,getApplicationContext());
         commentsList.setAdapter(adapter);
 
         if (b != null)

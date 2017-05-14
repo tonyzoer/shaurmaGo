@@ -32,7 +32,7 @@ public class CommentsAdapter extends ArrayAdapter<CommentModel> implements Dialo
         TextView comment;
         RatingBar rate;
     }
-    public CommentsAdapter(ArrayList<CommentModel> data, @NonNull Context context, @LayoutRes int resource) {
+    public CommentsAdapter(ArrayList<CommentModel> data, @NonNull Context context) {
         super(context, R.layout.comments_item, data);
         mContext=context;
         commentsSet=data;
@@ -74,7 +74,7 @@ public class CommentsAdapter extends ArrayAdapter<CommentModel> implements Dialo
 
         viewHolder.user_name.setText(dataModel.getUser_name());
         viewHolder.comment.setText(dataModel.getComment());
-        viewHolder.rate.setNumStars(dataModel.getRate().intValue());
+        viewHolder.rate.setRating(dataModel.getRate().floatValue());
         // Return the completed view to render on screen
         return convertView;
     }
