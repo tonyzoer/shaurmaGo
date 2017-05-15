@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.DownloadManager;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -29,6 +30,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.unicyb.shaurmago.Utils.Password;
 import com.unicyb.shaurmago.services.Request;
@@ -303,12 +305,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
             String ans = null;
+            String hashpass=null;
             try {
+                hashpass=Password.getSaltedHash(mPassword);
                 HashMap<String, String> keys = new HashMap<>();
                 keys.put("email", mEmail);
-                keys.put("hashpass", Password.getSaltedHash(mPassword));
+                keys.put("hashpass",hashpass );
                 keys.put("role", "CUTOMER");
+
                 ans = Request.post(getString(R.string.login_register), Request.hashMapToUrl(keys));
+
             } catch (InterruptedException e) {
                 return false;
             } catch (Exception e) {
@@ -322,6 +328,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             } else if (ans.contains("Error")) {
                 return false;
             } else {
+                SharedPreferences pref = getApplicationContext().getSharedPreferences("user", 0);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("userId",ans);
+                editor.putString("hashpass",hashpass);
+                editor.putString("email",mEmail);
+                editor.commit();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                "Ви ввійшли", Toast.LENGTH_LONG).show();
+                    }
+                });
                 return true;
             }
         }

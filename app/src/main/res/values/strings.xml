@@ -7,6 +7,7 @@
     <string name="get_points_count">https://shaurma-go-server-okamanahi.c9users.io/getpointscount.php</string>
     <string name="add_new_point_info">https://shaurma-go-server-okamanahi.c9users.io/addinfotopoint.php</string>
     <string name="login_register">https://shaurma-go-server-okamanahi.c9users.io/loginRegister.php</string>
+    <string name="add_new_comment">https://shaurma-go-server-okamanahi.c9users.io/addnewcomment.php</string>
     <string name="server">https://shaurma-go-server-okamanahi.c9users.io/</string>
     <string name="title_activity_main">MainActivity</string>
 
