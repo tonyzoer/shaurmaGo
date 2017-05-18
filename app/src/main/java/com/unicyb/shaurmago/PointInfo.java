@@ -15,9 +15,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.unicyb.shaurmago.Utils.SharedPreferencesUtil;
 import com.unicyb.shaurmago.Utils.Utility;
 import com.unicyb.shaurmago.adapters.CommentsAdapter;
 import com.unicyb.shaurmago.exceptions.NoInternetConnectionException;
@@ -25,9 +28,11 @@ import com.unicyb.shaurmago.exceptions.ServerTerminatedException;
 import com.unicyb.shaurmago.models.CommentModel;
 import com.unicyb.shaurmago.services.Request;
 import com.unicyb.shaurmago.services.ServerConnection;
+import com.unicyb.shaurmago.services.StringHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -38,6 +43,9 @@ import java.util.concurrent.ExecutionException;
 public class PointInfo extends Activity {
     ListView commentsList = null;
     String id;
+    RatingBar rate;
+    CommentsAdapter adapter;
+    ArrayList<CommentModel> arrayList;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,20 +53,15 @@ public class PointInfo extends Activity {
         ImageView img = (ImageView) findViewById(R.id.photo);
         TextView txt = (TextView) findViewById(R.id.desc);
         Bundle b = getIntent().getExtras();
+        rate= (RatingBar) findViewById(R.id.new_rate);
         id= null; // or other values
         Button sendBtn= (Button) findViewById(R.id.send);
         final EditText editText = (EditText) findViewById(R.id.comment_edit);
         //TODO add realisation
-        ArrayList<CommentModel> arrayList = new ArrayList<>();
-        arrayList.add(new CommentModel("First User", "LAldasldlasldlasfdsdl", 4.5));
-        arrayList.add(new CommentModel("Second User", "LAldasfdsfdsfdsfldlasldlasdl", 3.5));
-        arrayList.add(new CommentModel("Thid User", "LAdsfsdfldasldlasldlasdl", 3.5));
-        arrayList.add(new CommentModel("First User", "LAldasldlasldladsfsfhgsdfgsdl", 1.5));
-        arrayList.add(new CommentModel("First User", "LAldasldlasldladsfsfhgsdfgsdl", 0.5));
-        arrayList.add(new CommentModel("First User", "LAldasldlasldladsfsfhgsdfgsdl", 0.49));
+        arrayList = new ArrayList<>();
         commentsList = (ListView) findViewById(R.id.commentsList);
         Utility.setListViewHeight(commentsList);
-        CommentsAdapter adapter = new CommentsAdapter(arrayList, getApplicationContext());
+        adapter = new CommentsAdapter(arrayList, getApplicationContext());
         commentsList.setAdapter(adapter);
 
         if (b != null) {
@@ -84,9 +87,42 @@ public class PointInfo extends Activity {
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new CommentPoint().execute(editText.getText().toString());
+                new CommentPoint().execute(editText.getText().toString(), String.valueOf(rate.getRating()));
             }
         });
+        new DownloadComments().execute();
+    }
+
+    private class DownloadComments extends AsyncTask<Void,CommentModel,Void>{
+        @Override
+        protected Void doInBackground(Void... params) {
+            HashMap<String,String> map=new HashMap<>();
+            map.put("id",id);
+             JSONArray arr=null;
+            try {
+            arr=new JSONArray(Request.post(getString(R.string.get_comments),Request.hashMapToUrl(map)));
+                for (int i = 0; i < arr.length(); i++) {
+                    JSONObject obj = arr.getJSONObject(i);
+                    publishProgress(new CommentModel(obj.getString("email"),obj.getString("text"),obj.getDouble("stars")));
+                }
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(CommentModel... values) {
+            for (CommentModel cm:values
+                 ) {
+                arrayList.add(cm);
+            }
+            super.onProgressUpdate(values);
+        }
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
@@ -135,9 +171,8 @@ public class PointInfo extends Activity {
             String ans = null;
             HashMap<String, String> posthashmap = new HashMap<String, String>();
             //TODO finish this after creating shared prefernce for user log
-            SharedPreferences pref = getApplicationContext().getSharedPreferences("user", 0);
-            String userId=pref.getString("userId","0");
-            if (!userId.equals("0")){
+            String email= SharedPreferencesUtil.getDefaults("email",getApplicationContext());
+            if (email.equals(null)){
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -148,9 +183,9 @@ public class PointInfo extends Activity {
                 return null;
             }
             posthashmap.put("id",id);
-            posthashmap.put("omment",params[0]);
-            posthashmap.put("userId",userId);
-            posthashmap.put("hashpass",pref.getString("hashpass","0"));
+            posthashmap.put("comment",params[0]);
+            posthashmap.put("userId",SharedPreferencesUtil.getDefaults("id",getApplicationContext()));
+            posthashmap.put("stars", params[1]);
             try {
                  ans= Request.post(getString(R.string.add_new_comment), Request.hashMapToUrl(posthashmap));
             } catch (UnsupportedEncodingException e) {
@@ -158,5 +193,6 @@ public class PointInfo extends Activity {
             }
             return ans;
         }
+
     }
 }

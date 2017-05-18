@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.unicyb.shaurmago.Utils.Password;
+import com.unicyb.shaurmago.Utils.SharedPreferencesUtil;
 import com.unicyb.shaurmago.services.Request;
 
 import java.util.ArrayList;
@@ -307,38 +308,43 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             String ans = null;
             String hashpass=null;
             try {
-                hashpass=Password.getSaltedHash(mPassword);
+                hashpass=mPassword;
                 HashMap<String, String> keys = new HashMap<>();
                 keys.put("email", mEmail);
                 keys.put("hashpass",hashpass );
                 keys.put("role", "CUTOMER");
 
                 ans = Request.post(getString(R.string.login_register), Request.hashMapToUrl(keys));
-
-            } catch (InterruptedException e) {
-                return false;
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            if (ans.equals("Pass not matches")) {
+            if (ans.contains("Pass not matches")) {
                 return false;
-            } else if (ans.equals("Enter")) {
-                return true;
-            } else if (ans.contains("Error")) {
-                return false;
-            } else {
-                SharedPreferences pref = getApplicationContext().getSharedPreferences("user", 0);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString("userId",ans);
-                editor.putString("hashpass",hashpass);
-                editor.putString("email",mEmail);
-                editor.commit();
+            } else if (ans.contains("Enter")) {
+
+                SharedPreferencesUtil.setDefaults("id",ans.replace("Enter","").replace("\n",""),getApplicationContext());
+                SharedPreferencesUtil.setDefaults("hashpass",hashpass,getApplicationContext());
+                SharedPreferencesUtil.setDefaults("email",mEmail,getApplicationContext());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(),
                                 "Ви ввійшли", Toast.LENGTH_LONG).show();
+                    }
+                });
+                return true;
+            } else if (ans.contains("Error")) {
+                return false;
+            } else {
+                SharedPreferencesUtil.setDefaults("id",ans.replace("Enter","").replace("\n",""),getApplicationContext());
+                SharedPreferencesUtil.setDefaults("hashpass",hashpass,getApplicationContext());
+                SharedPreferencesUtil.setDefaults("email",mEmail,getApplicationContext());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                "Ви зареєструвались та ввійшли", Toast.LENGTH_LONG).show();
                     }
                 });
                 return true;
