@@ -2,6 +2,9 @@ package com.unicyb.shaurmago.services;
 
 import android.util.Log;
 
+import com.unicyb.shaurmago.exceptions.NoInternetConnectionException;
+import com.unicyb.shaurmago.exceptions.ServerTerminatedException;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -22,8 +25,11 @@ public class Request {
 
     private static final String TAG = Request.class.getSimpleName();
 
-    public static String post(String serverUrl, String dataToSend) {
+    public static String post(String serverUrl, String dataToSend) throws NoInternetConnectionException, ServerTerminatedException {
         try {
+            if (!isOnline()) {
+                throw new NoInternetConnectionException();
+            }
             URL url = new URL(serverUrl);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             //set timeout of 30 seconds
@@ -62,13 +68,14 @@ public class Request {
                 return sb.toString();
             } else {
                 Log.e(TAG, "ERROR - Invalid response code from server " + responseCode);
-                return null;
+                throw new ServerTerminatedException("Server out of run");
             }
 
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "ERROR " + e);
-            return null;
+            throw new ServerTerminatedException("Server out of run");
+
         }
     }
 
@@ -89,5 +96,16 @@ public class Request {
         return result.toString();
     }
 
-
+    //TODO Change this, it works unexpeted on diferent devices
+    private static boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
