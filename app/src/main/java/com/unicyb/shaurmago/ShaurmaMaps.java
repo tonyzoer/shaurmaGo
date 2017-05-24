@@ -74,7 +74,7 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
             @Override
             public boolean onMarkerClick(Marker marker) {
                 startActivity(new Intent(ShaurmaMaps.this, PointInfo.class).putExtra("id",
-                        marker.getSnippet()));
+                        marker.getSnippet()).putExtra("name",marker.getTitle()));
                 return false;
             }
         });

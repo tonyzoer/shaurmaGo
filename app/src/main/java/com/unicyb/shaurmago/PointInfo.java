@@ -37,6 +37,7 @@ import java.util.concurrent.ExecutionException;
 public class PointInfo extends Activity {
     ListView commentsList = null;
     String id;
+    String title;
     RatingBar rate;
     CommentsAdapter adapter;
     ArrayList<CommentModel> commnetsArrayList;
@@ -46,6 +47,7 @@ public class PointInfo extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_point_info);
         ImageView img = (ImageView) findViewById(R.id.photo);
+
         TextView txt = (TextView) findViewById(R.id.desc);
         Bundle b = getIntent().getExtras();
         rate = (RatingBar) findViewById(R.id.new_rate);
@@ -58,27 +60,21 @@ public class PointInfo extends Activity {
         Utility.setListViewHeight(commentsList);
         adapter = new CommentsAdapter(commnetsArrayList, getApplicationContext());
         commentsList.setAdapter(adapter);
-
         if (b != null) {
             id = b.getString("id");
+            title = b.getString("name");
+            txt.setText(title);
         } else {
             finish();
         }
         JSONArray arr = null;
         try {
-            arr = new DownloadPointInfoTask().execute(id).get();
+            arr = new DownloadPointInfoTask(img).execute(id).get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        if (arr != null && arr.length() == 1) {
-            try {
-                new DownloadImageTask(img).execute(
-                        getString(R.string.server) + arr.getJSONObject(0).getString("photo"));
-                txt.setText(arr.getJSONObject(0).getString("desc"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+
+
         sendBtn.setOnClickListener(new View.OnClickListener() {
 
 
@@ -167,9 +163,15 @@ public class PointInfo extends Activity {
     }
 
     private class DownloadPointInfoTask extends AsyncTask<String, Void, JSONArray> {
+        ImageView img;
+        JSONArray arr;
+        public DownloadPointInfoTask(ImageView img) {
+            this.img = img;
+        }
+
         @Override
         protected JSONArray doInBackground(String... params) {
-            JSONArray arr = null;
+            arr = null;
             try {
                 HashMap<String, String> map = new HashMap<>();
                 map.put("id", params[0]);
@@ -200,6 +202,17 @@ public class PointInfo extends Activity {
                 e.printStackTrace();
             }
             return arr;
+        }
+
+        @Override
+        protected void onPostExecute(JSONArray jsonArray) {
+            super.onPostExecute(jsonArray);
+            try {
+                new DownloadImageTask(img).execute(
+                        getString(R.string.server) + jsonArray.getJSONObject(0).getString("photo"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -51,7 +51,7 @@ public class Request {
             //get the response
             int responseCode = con.getResponseCode();
 
-            if (responseCode == HttpURLConnection.HTTP_OK) {
+//            if (responseCode == HttpURLConnection.HTTP_OK) {
                 //read the response
                 StringBuilder sb = new StringBuilder();
 
@@ -66,10 +66,10 @@ public class Request {
 
                 //return the response
                 return sb.toString();
-            } else {
-                Log.e(TAG, "ERROR - Invalid response code from server " + responseCode);
-                throw new ServerTerminatedException("Server out of run");
-            }
+//            } else {
+//                Log.e(TAG, "ERROR - Invalid response code from server " + responseCode);
+//                throw new ServerTerminatedException("Server out of run");
+//            }
 
         } catch (IOException e) {
             e.printStackTrace();
