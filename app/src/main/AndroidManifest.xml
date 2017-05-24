@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
@@ -35,7 +36,12 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
+        <activity
+            android:name=".barcode_reader.BarcodeActivity"
+            android:label="BarcodeActivity" />
+        <activity
+            android:name=".barcode_reader.BarcodeCaptureActivity"
+            android:label="BarcodeCaptureActivity" />
         <activity
             android:name=".ShaurmaMaps"
             android:label="@string/title_activity_shaurma_maps" />

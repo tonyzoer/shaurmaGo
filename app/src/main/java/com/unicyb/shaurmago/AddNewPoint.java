@@ -6,8 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,9 +22,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.unicyb.shaurmago.Utils.Utility;
 import com.unicyb.shaurmago.services.Request;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

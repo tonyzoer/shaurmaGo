@@ -10,16 +10,16 @@ import android.util.Pair;
 import android.view.View;
 import android.widget.Toast;
 
-import com.unicyb.shaurmago.exceptions.NoInternetConnectionException;
-import com.unicyb.shaurmago.exceptions.ServerTerminatedException;
-import com.unicyb.shaurmago.services.Request;
-import com.unicyb.shaurmago.services.StringHelper;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.unicyb.shaurmago.Utils.StringHelper;
+import com.unicyb.shaurmago.exceptions.NoInternetConnectionException;
+import com.unicyb.shaurmago.exceptions.ServerTerminatedException;
+import com.unicyb.shaurmago.services.Request;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,7 +55,7 @@ public class ShaurmaMaps extends FragmentActivity implements OnMapReadyCallback 
                 mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
-                        mMap.addMarker(new MarkerOptions().position(latLng));
+                        Marker mk=mMap.addMarker(new MarkerOptions().position(latLng));
                         startActivity(new Intent(ShaurmaMaps.this, AddNewPoint.class).putExtra("latlng", latLng));
                         mMap.setOnMapClickListener(null);
                     }

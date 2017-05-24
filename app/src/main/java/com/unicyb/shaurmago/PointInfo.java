@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -86,13 +85,13 @@ public class PointInfo extends Activity {
             @Override
             public void onClick(View v) {
                 editText.clearFocus();
-                new CommentPoint().execute(editText.getText().toString(), String.valueOf(rate.getRating()));
+                new CommentPointTask().execute(editText.getText().toString(), String.valueOf(rate.getRating()));
             }
         });
-        new DownloadComments().execute();
+        new DownloadCommentsTask().execute();
     }
 
-    private class DownloadComments extends AsyncTask<Void, CommentModel, Void> {
+    private class DownloadCommentsTask extends AsyncTask<Void, CommentModel, Void> {
         @Override
         protected Void doInBackground(Void... params) {
             HashMap<String, String> map = new HashMap<>();
@@ -204,7 +203,7 @@ public class PointInfo extends Activity {
         }
     }
 
-    private class CommentPoint extends AsyncTask<String, Void, String> {
+    private class CommentPointTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
             String ans = null;

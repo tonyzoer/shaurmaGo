@@ -1,4 +1,4 @@
-package com.unicyb.shaurmago.services;
+package com.unicyb.shaurmago.Utils;
 
 public class StringHelper {
     public static String fromUtfToRus(String s) {
