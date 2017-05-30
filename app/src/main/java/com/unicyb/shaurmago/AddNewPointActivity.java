@@ -15,7 +15,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,31 +22,38 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.unicyb.shaurmago.Utils.FirebaseDatabaseUtil;
 import com.unicyb.shaurmago.Utils.Utility;
-import com.unicyb.shaurmago.services.Request;
+import com.unicyb.shaurmago.models.MarkerModel;
+import com.unicyb.shaurmago.models.PointInfoModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
 
-public class AddNewPoint extends AppCompatActivity {
+public class AddNewPointActivity extends AppCompatActivity {
 
-    private static final String TAG = AddNewPoint.class.getSimpleName();
+    private static final String TAG = AddNewPointActivity.class.getSimpleName();
     private static int REQUEST_CAMERA = 0, SELECT_FILE = 1;
     LatLng pos;
     private ImageView ivImage;
     private EditText name;
     private EditText desc;
     private String userChosenTask;
+    private FirebaseDatabase mDatabase;
+    private DatabaseReference mMarkerRef;
+    private DatabaseReference mPointInfoRef;
+    private Bitmap imageBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_point);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.add_new_point_toolbar);
         setSupportActionBar(toolbar);
 
         ivImage = (ImageView) findViewById(R.id.previewAddPhoto);
@@ -63,7 +69,7 @@ public class AddNewPoint extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ivImage.buildDrawingCache();
-                new Upload(ivImage.getDrawingCache(), name.getText().toString(),
+                new Upload(imageBitmap, name.getText().toString(),
                         desc.getText().toString()).execute();
             }
         });
@@ -74,25 +80,26 @@ public class AddNewPoint extends AppCompatActivity {
                 selectImage();
             }
         });
+        mDatabase = FirebaseDatabaseUtil.getDatabase();
+        mMarkerRef = mDatabase.getReference().child("marker");
+        mPointInfoRef = mDatabase.getReference().child("pointInfo");
+
     }
 
 
     private void selectImage() {
         final CharSequence[] items = {"Take Photo", "Choose from Library",
                 "Cancel"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(AddNewPoint.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(AddNewPointActivity.this);
         builder.setTitle("Add Photo!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-//                boolean result = Utility.checkPermission(AddNewPoint.this);
                 if (items[item].equals("Take Photo")) {
                     userChosenTask = "Take Photo";
-//                    if(result)
                     cameraIntent();
                 } else if (items[item].equals("Choose from Library")) {
                     userChosenTask = "Choose from Library";
-//                    if(result)
                     galleryIntent();
                 } else if (items[item].equals("Cancel")) {
                     dialog.dismiss();
@@ -120,12 +127,13 @@ public class AddNewPoint extends AppCompatActivity {
         switch (requestCode) {
             case Utility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (userChosenTask.equals("Take Photo"))
+                    if (userChosenTask.equals("Зробити фото"))
                         cameraIntent();
-                    else if (userChosenTask.equals("Choose from Library"))
+                    else if (userChosenTask.equals("Вибрати з галереї"))
                         galleryIntent();
                 } else {
-                    //TODO: code for deny
+                    Toast.makeText(getApplicationContext(), "Нет доступа", Toast.LENGTH_LONG);
+
                 }
                 break;
         }
@@ -146,9 +154,10 @@ public class AddNewPoint extends AppCompatActivity {
 
     private void onCaptureImageResult(Intent data) {
         Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+        imageBitmap=thumbnail;
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         if (thumbnail != null) {
-            thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+            thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         }
 
         File destination = new File(Environment.getExternalStorageDirectory(),
@@ -181,6 +190,7 @@ public class AddNewPoint extends AppCompatActivity {
             try {
                 bm = MediaStore.Images.Media.getBitmap(
                         getApplicationContext().getContentResolver(), data.getData());
+                imageBitmap=bm;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -207,41 +217,21 @@ public class AddNewPoint extends AppCompatActivity {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             //compress the image to jpg format
             image.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-            /*
-            * encode image to base64 so that it can be picked by saveImage.php file
-            * */
-
             String encodeImage = Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT);
-
-            //generate hashMap to store encodedImage and the name
-
-            HashMap<String, String> detail = new HashMap<>();
-            detail.put("name", name);
-            detail.put("image", encodeImage);
-            detail.put("desc", desc);
-            detail.put("lat", String.valueOf(latlng.latitude));
-            detail.put("lng", String.valueOf(latlng.longitude));
-
-            try {
-                //convert this HashMap to encodedUrl to send to php file
-
-                String dataToSend = Request.hashMapToUrl(detail);
-                //make a Http request and send data to saveImage.php file
-
-                return Request.post(getString(R.string.add_new_point_info), dataToSend);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.e(TAG, "ERROR  " + e);
-                return null;
-            }
+            String id = mMarkerRef.push().getKey();
+            MarkerModel markerModel = new MarkerModel(id, latlng.latitude, latlng.longitude, name);
+            PointInfoModel pointInfoModel = new PointInfoModel(id, encodeImage, desc);
+            mPointInfoRef.child(id).setValue(pointInfoModel);
+            mMarkerRef.child(id).setValue(markerModel);
+            return name;
         }
 
 
         @Override
         protected void onPostExecute(String s) {
             //show image uploaded
-            Toast.makeText(getApplicationContext(), "Image Uploaded" + s, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Точка создана " + s, Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(AddNewPointActivity.this, MapActivity.class));
         }
 
     }

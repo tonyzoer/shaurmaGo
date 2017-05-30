@@ -5,22 +5,43 @@ package com.unicyb.shaurmago.models;
  */
 
 public class CommentModel {
-    String user_name;
-    String comment;
-    Double rate;
+    private String id;
+    private String user_id;
+    private String pointInfoId;
+    private String comment;
+    private Double rate;
+
+    public CommentModel() {
+    }
 
     public CommentModel(String user_name, String comment, Double rate) {
-        this.user_name = user_name;
+        this.user_id = user_name;
         this.comment = comment;
         this.rate = rate;
     }
 
-    public String getUser_name() {
-        return user_name;
+    public String getId() {
+        return id;
     }
 
-    public void setUser_name(String user_name) {
-        this.user_name = user_name;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getPointInfoId() {
+        return pointInfoId;
+    }
+
+    public void setPointInfoId(String pointInfoId) {
+        this.pointInfoId = pointInfoId;
+    }
+
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 
     public String getComment() {

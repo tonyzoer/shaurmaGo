@@ -16,8 +16,12 @@
         <menu>
             <item
                 android:id="@+id/nav_login"
-                android:icon="@drawable/common_google_signin_btn_text_light_normal"
-                android:title="Login" />
+                android:icon="@drawable/ic_person_outline_black_24dp"
+                android:title="Log in" />
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_logout_24dp"
+                android:title="Log out" />
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
