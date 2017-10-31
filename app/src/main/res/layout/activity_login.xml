@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.unicyb.shaurmago.LoginActivity">
+    tools:context="com.unicyb.shaurmago.activity.impl.LoginActivity">
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:id="@+id/email"
+                android:id="@+id/login_email_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:id="@+id/password"
+                android:id="@+id/login_password_edit_text"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -56,7 +56,7 @@
         <!-- Login Button -->
 
         <Button
-            android:id="@+id/btn_login"
+            android:id="@+id/login_login_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
@@ -65,21 +65,26 @@
             android:textColor="@android:color/black" />
 
         <Button
-            android:id="@+id/btn_anonymous_login"
+            android:id="@+id/login_login_anonymously_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
             android:background="@color/colorAccent"
             android:text="@string/btn_anonumous_login"
             android:textColor="@android:color/black" />
-
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/login_google_signin_btn"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_marginTop="20dip"
+            />
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btn_reset_password"
+                android:id="@+id/login_reset_password_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
@@ -91,7 +96,7 @@
             <!-- Link to Login Screen -->
 
             <Button
-                android:id="@+id/btn_signup"
+                android:id="@+id/login_signup_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
@@ -106,7 +111,7 @@
     </LinearLayout>
 
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/login_progressBar"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_gravity="center|bottom"

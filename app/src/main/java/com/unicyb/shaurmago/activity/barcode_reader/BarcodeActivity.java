@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.unicyb.shaurmago.barcode_reader;
+package com.unicyb.shaurmago.activity.barcode_reader;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -25,7 +25,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
-import com.unicyb.shaurmago.PointInfoActivity;
+import com.unicyb.shaurmago.activity.impl.PointInfoActivity;
 import com.unicyb.shaurmago.R;
 import com.unicyb.shaurmago.Utils.Utility;
 

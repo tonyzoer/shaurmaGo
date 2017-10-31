@@ -7,9 +7,8 @@
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality.
     -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
@@ -25,6 +24,7 @@
         android:roundIcon="@mipmap/ic_kebab"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -36,37 +36,37 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+
         <activity
-            android:name=".barcode_reader.BarcodeActivity"
+            android:name=".activity.barcode_reader.BarcodeActivity"
             android:label="BarcodeActivity" />
         <activity
-            android:name=".barcode_reader.BarcodeCaptureActivity"
+            android:name=".activity.barcode_reader.BarcodeCaptureActivity"
             android:label="BarcodeCaptureActivity" />
         <activity
-            android:name=".MapActivity"
+            android:name=".activity.impl.MapActivity"
             android:label="@string/title_activity_shaurma_maps" />
         <activity
-            android:name=".PointInfoActivity"
+            android:name=".activity.impl.PointInfoActivity"
             android:label="PointInfo" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.impl.MainActivity"
             android:label="ShaurmaGo"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".AddNewPointActivity"
+            android:name=".activity.impl.AddNewPointActivity"
             android:label="@string/title_activity_add_new_point"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".SignupActivity"
+            android:name=".activity.impl.SignupActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ResetPasswordActivity"
+            android:name=".activity.impl.ResetPasswordActivity"
             android:label="@string/title_activity_reset_password"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".activity.impl.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -74,6 +74,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activity.impl.ResponseActivity"
+            android:label="@string/title_activity_response"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
+            android:name=".activity.impl.FullScreenViewActivity"
+            android:label="@string/title_activity_fullscreenimage"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+
     </application>
 
 </manifest>

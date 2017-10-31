@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.unicyb.shaurmago.barcode_reader.camera;
+package com.unicyb.shaurmago.activity.barcode_reader.camera;
 
 import android.Manifest;
 import android.annotation.SuppressLint;

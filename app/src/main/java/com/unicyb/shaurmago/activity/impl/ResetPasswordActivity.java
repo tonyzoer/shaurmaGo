@@ -1,4 +1,4 @@
-package com.unicyb.shaurmago;
+package com.unicyb.shaurmago.activity.impl;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.unicyb.shaurmago.R;
 
 public class ResetPasswordActivity extends AppCompatActivity {
 
@@ -26,10 +27,10 @@ public class ResetPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
 
-        inputEmail = (EditText) findViewById(R.id.email);
-        btnReset = (Button) findViewById(R.id.btn_reset_password);
+        inputEmail = (EditText) findViewById(R.id.login_email_edit_text);
+        btnReset = (Button) findViewById(R.id.login_reset_password_btn);
         btnBack = (Button) findViewById(R.id.btn_back);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) findViewById(R.id.login_progressBar);
 
         auth = FirebaseAuth.getInstance();
 

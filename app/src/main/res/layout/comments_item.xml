@@ -14,26 +14,38 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@android:color/black" />
 
-
-    <TextView
-        android:id="@+id/comment_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/user_name"
-        android:layout_marginTop="5dp"
-        android:text="Comment text"
-        android:textColor="@android:color/black" />
-
     <RatingBar
         android:id="@+id/comment_rate"
         style="@style/Widget.AppCompat.RatingBar.Indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
+
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:numStars="5" />
+
+    <TextView
+        android:id="@+id/comment_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_below="@+id/comment_rate"
+        android:layout_marginTop="28dp"
+        android:text="Comment text"
+        android:textColor="@android:color/black" />
+
+    <LinearLayout
+        android:id="@+id/comment_photo_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:layout_below="@+id/comment_text"
+        android:orientation="horizontal">
+
+    </LinearLayout>
 
 
-        android:layout_marginTop="8dp"
-        android:numStars="5" />
 </RelativeLayout>

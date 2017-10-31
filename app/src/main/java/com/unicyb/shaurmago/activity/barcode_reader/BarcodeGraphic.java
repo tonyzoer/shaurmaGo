@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.unicyb.shaurmago.barcode_reader;
+package com.unicyb.shaurmago.activity.barcode_reader;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -21,7 +21,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 
 import com.google.android.gms.vision.barcode.Barcode;
-import com.unicyb.shaurmago.barcode_reader.camera.GraphicOverlay;
+import com.unicyb.shaurmago.activity.barcode_reader.camera.GraphicOverlay;
 
 /**
  * Graphic instance for rendering barcode position, size, and ID within an associated graphic

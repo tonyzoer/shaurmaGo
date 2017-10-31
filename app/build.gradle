@@ -35,10 +35,21 @@ dependencies {
     compile 'androidmads.library.qrgenearator:QRGenearator:1.0.0'
     compile 'com.google.firebase:firebase-database:10.2.0'
     compile 'com.google.firebase:firebase-auth:10.2.0'
-    compile 'com.google.maps.android:android-maps-utils:0.5+'
+    compile 'com.google.maps.android:android-maps-utils:0.5'
+    compile 'com.google.firebase:firebase-storage:10.2.0'
+
     testCompile 'junit:junit:4.12'
 }
 
+repositories {
+    mavenCentral()
+    maven { url 'https://maven.google.com' }
+}
+
+dependencies {
+    compile 'com.github.bumptech.glide:glide:4.2.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.2.0'
+}
 
 
 apply plugin: 'com.google.gms.google-services'

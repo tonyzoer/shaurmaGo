@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.unicyb.shaurmago.barcode_reader;
+package com.unicyb.shaurmago.activity.barcode_reader;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -46,9 +46,9 @@ import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.unicyb.shaurmago.R;
-import com.unicyb.shaurmago.barcode_reader.camera.CameraSource;
-import com.unicyb.shaurmago.barcode_reader.camera.CameraSourcePreview;
-import com.unicyb.shaurmago.barcode_reader.camera.GraphicOverlay;
+import com.unicyb.shaurmago.activity.barcode_reader.camera.CameraSource;
+import com.unicyb.shaurmago.activity.barcode_reader.camera.CameraSourcePreview;
+import com.unicyb.shaurmago.activity.barcode_reader.camera.GraphicOverlay;
 
 import java.io.IOException;
 

@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.unicyb.shaurmago.barcode_reader;
+package com.unicyb.shaurmago.activity.barcode_reader;
 
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.barcode.Barcode;
-import com.unicyb.shaurmago.barcode_reader.camera.GraphicOverlay;
+import com.unicyb.shaurmago.activity.barcode_reader.camera.GraphicOverlay;
 
 /**
  * Factory for creating a tracker and associated graphic to be associated with a new barcode.  The

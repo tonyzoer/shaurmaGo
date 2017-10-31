@@ -1,4 +1,4 @@
-package com.unicyb.shaurmago;
+package com.unicyb.shaurmago.activity.impl;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +15,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.unicyb.shaurmago.R;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -22,7 +25,8 @@ public class SignupActivity extends AppCompatActivity {
     private Button btnSignIn, btnSignUp, btnResetPassword;
     private ProgressBar progressBar;
     private FirebaseAuth auth;
-
+    private FirebaseDatabase mDatabase;
+    private DatabaseReference mUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,10 +37,10 @@ public class SignupActivity extends AppCompatActivity {
 
         btnSignIn = (Button) findViewById(R.id.sign_in_button);
         btnSignUp = (Button) findViewById(R.id.sign_up_button);
-        inputEmail = (EditText) findViewById(R.id.email);
-        inputPassword = (EditText) findViewById(R.id.password);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        btnResetPassword = (Button) findViewById(R.id.btn_reset_password);
+        inputEmail = (EditText) findViewById(R.id.login_email_edit_text);
+        inputPassword = (EditText) findViewById(R.id.login_password_edit_text);
+        progressBar = (ProgressBar) findViewById(R.id.login_progressBar);
+        btnResetPassword = (Button) findViewById(R.id.login_reset_password_btn);
 
         btnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +93,7 @@ public class SignupActivity extends AppCompatActivity {
                                     Toast.makeText(SignupActivity.this, "Authentication failed." + task.getException(),
                                             Toast.LENGTH_SHORT).show();
                                 } else {
+
                                     startActivity(new Intent(SignupActivity.this, MainActivity.class));
                                     finish();
                                 }

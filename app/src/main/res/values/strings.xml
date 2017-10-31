@@ -59,5 +59,12 @@
     <string name="auth_failed">Не вірний пароль або пошта</string>
     <string name="title_activity_reset_password">Відновити пароль</string>
     <string name="btn_anonumous_login">Ввійти анонімно</string>
+    <string name="title_activity_response">Response</string>
+    <string name="send">Відправити</string>
+    <string name="left_response">Залиш Відгук</string>
+    <string name="taste">Смак</string>
+    <string name="texture">Текстура</string>
+    <string name="point_rate">Оцінка Заклада</string>
+    <string name="title_activity_fullscreenimage">Фото</string>
 
 </resources>

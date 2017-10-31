@@ -8,16 +8,16 @@
     android:layout_height="match_parent"
     android:keepScreenOn="true">
 
-  <com.unicyb.shaurmago.barcode_reader.camera.CameraSourcePreview
+  <com.unicyb.shaurmago.activity.barcode_reader.camera.CameraSourcePreview
       android:id="@+id/preview"
       android:layout_width="match_parent"
       android:layout_height="match_parent">
 
-    <com.unicyb.shaurmago.barcode_reader.camera.GraphicOverlay
+    <com.unicyb.shaurmago.activity.barcode_reader.camera.GraphicOverlay
         android:id="@+id/graphicOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-  </com.unicyb.shaurmago.barcode_reader.camera.CameraSourcePreview>
+  </com.unicyb.shaurmago.activity.barcode_reader.camera.CameraSourcePreview>
 
 </LinearLayout>

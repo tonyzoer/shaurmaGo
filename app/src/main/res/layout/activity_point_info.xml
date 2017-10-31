@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:id="@+id/container">
 
 
     <ImageView
@@ -12,6 +13,9 @@
         android:layout_height="180dp"
         android:layout_weight="0.24"
         android:adjustViewBounds="true"
+        android:cropToPadding="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_menu_camera"
         android:visibility="visible" />
 
     <ScrollView
@@ -42,54 +46,25 @@
 
             <ListView
                 android:id="@+id/commentsList"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="0.86"
                 tools:layout_editor_absoluteY="172dp"
                 tools:layout_editor_absoluteX="0dp" />
-            <RelativeLayout android:layout_height="wrap_content"
-                android:layout_width="match_parent">
-
-                <TextView
-                    android:id="@+id/left_comment_header"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/activity_vertical_margin"
-                    android:layout_weight="0.05"
-                    android:text="Залиште свій коментар"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="431dp" />/>
-
-
-                <EditText
-                    android:id="@+id/comment_edit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/left_comment_header"
-                    android:layout_margin="10dp"
-                    android:hint="Ваш коментар"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="456dp" />
-
-
-
-            <RatingBar
-                android:id="@+id/new_rate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/comment_edit"
-                />
 
             <Button
-                android:id="@+id/send"
-                android:layout_width="wrap_content"
+                android:id="@+id/point_info_response_activity_btn"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Відправити"
-                android:layout_alignParentRight="true"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="15dp"
-                android:layout_below="@id/comment_edit"/>
-            </RelativeLayout>
+                android:layout_weight="0.1"
+                android:text="Залишити коментар" />
         </LinearLayout>
     </ScrollView>
+
+    <ImageView
+        android:id="@+id/expanded_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
 </LinearLayout>

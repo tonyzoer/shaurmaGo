@@ -1,10 +1,12 @@
-package com.unicyb.shaurmago;
+package com.unicyb.shaurmago.activity.impl;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -12,8 +14,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -28,14 +32,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.unicyb.shaurmago.R;
 import com.unicyb.shaurmago.Utils.FirebaseDatabaseUtil;
-import com.unicyb.shaurmago.barcode_reader.BarcodeActivity;
+import com.unicyb.shaurmago.activity.barcode_reader.BarcodeActivity;
 import com.unicyb.shaurmago.models.MarkerModel;
 
 import java.util.HashMap;
 
 
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback ,NavigationView.OnNavigationItemSelectedListener {
+public class MapActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MapActivity";
     private GoogleMap mMap;
@@ -51,7 +56,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        NavigationView navView= (NavigationView) findViewById(R.id.maps_nav_view);
+        NavigationView navView = (NavigationView) findViewById(R.id.maps_nav_view);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -71,8 +76,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 });
             }
         });
-        if (mDatabase==null){
-        mDatabase = FirebaseDatabaseUtil.getDatabase();
+        if (mDatabase == null) {
+            mDatabase = FirebaseDatabaseUtil.getDatabase();
         }
         mMarker = mDatabase.getReference("marker");
         mMarker.addValueEventListener(new ValueEventListener() {
@@ -119,6 +124,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             }
         });
     }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -132,20 +138,26 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        if (ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "No location ennable", Toast.LENGTH_SHORT).show();
+        } else {
+            mMap.setMyLocationEnabled(true);
+        }
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
                 startActivity(new Intent(MapActivity.this, PointInfoActivity.class).putExtra("id",
                         marker.getSnippet()).putExtra("name", marker.getTitle()));
-                return false;
+                return true;
             }
         });
     }
 
 
     public void addMarker(MarkerModel mk) {
-        BitmapDescriptor icon= BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker);
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker);
         MarkerOptions mo = new MarkerOptions().position(new LatLng(mk.getLat(), mk.getLng())).title(mk.getName()).snippet(mk.getId()).icon(icon);
         markers.put(mk.getId(), mMap.addMarker(mo));
     }

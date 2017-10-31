@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.unicyb.shaurmago.AddNewPointActivity">
+    tools:context="com.unicyb.shaurmago.activity.impl.AddNewPointActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -40,7 +40,7 @@
         android:inputType="textPersonName" />
 
     <include
-        android:id="@+id/include2"
+        android:id="@+id/response_menu_send_btn"
         layout="@layout/content_add_new_point"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -61,7 +61,7 @@
         android:layout_marginStart="50dp"
         android:layout_marginTop="5dp"
         android:text="Add Photo"
-        app:layout_anchor="@+id/include2"
+        app:layout_anchor="@+id/response_menu_send_btn"
         app:layout_anchorGravity="center_vertical|left"
         tools:targetApi="lollipop" />
 
